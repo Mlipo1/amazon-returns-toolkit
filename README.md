@@ -63,28 +63,13 @@ automations.
 
 ---
 
-## The bookmarklet
-
-The same QR sheet with **nothing installed** — a bookmark you drag to the bar. The extension
-does everything it does and more; this exists for people who'd rather not install an
-extension at all.
-
-1. Open `bookmarklet/install.html`
-2. **Drag** the yellow button to your bookmarks bar — don't click it there
-3. On any `amazon.com` page, click **📦 My Return Codes**
-
-It only works while you're on an `amazon.com` tab, because it relies on same-origin `fetch`.
-
----
-
 ## What this does and doesn't do
 
 **Read-only.** It fetches your returns pages and parses them. Nothing is cancelled, edited,
 or submitted, and no email sends until you press Send yourself.
 
-**Nothing leaves your browser.** Settings and recipients live in `chrome.storage.local` (or
-`localStorage` for the bookmarklet). The only outbound request is the Home Assistant webhook
-you configure yourself.
+**Nothing leaves your browser.** Settings and recipients live in `chrome.storage.local`.
+The only outbound request is the Home Assistant webhook you configure yourself.
 
 **QR links expire after 7 days.** They're presigned S3 URLs. Every row carries an *On Amazon*
 link that loads a fresh one.
@@ -113,7 +98,7 @@ Amazon reshuffles their markup periodically. Two selectors carry almost everythi
 - `.item-return-history-card` — one card per return on the list page
 - `qrcode-images` — matched against `img[src]` on the return status page
 
-[docs/NOTES.md](docs/NOTES.md) documents everything non-obvious behind both tools — presigned
+[docs/NOTES.md](docs/NOTES.md) documents everything non-obvious — presigned
 QR URLs, the CORS asymmetry between product and QR images, why the clipboard copy must be
 synchronous, why message names can't overlap, and the sorting trap that let an overdue return
 hide an upcoming one.
@@ -126,7 +111,6 @@ extension/           Chrome extension (MV3)
   offscreen.js         all fetching + parsing (service workers have no DOMParser)
   popup.html/js        toolbar popup
   report.html/js       the QR sheet
-bookmarklet/         source.js -> build.py -> install.html
 dist/                packaged .zip, store screenshot, store icon
 docs/                NOTES, HOME-ASSISTANT, CHROME-WEB-STORE, PRIVACY,
                      AUTOMATION, SHARING
@@ -134,13 +118,11 @@ package.py           builds the Chrome Web Store zip
 make_screenshot.py   renders the 1280x800 store screenshot
 ```
 
-Editing the bookmarklet means editing `bookmarklet/source.js`, then:
+Rebuild the Chrome Web Store zip after any change:
 
 ```bash
-python bookmarklet/build.py
+python package.py
 ```
-
-which re-encodes it into `install.html`. Re-drag the button afterwards.
 
 ## License
 

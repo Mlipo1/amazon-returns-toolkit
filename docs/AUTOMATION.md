@@ -37,9 +37,9 @@ none, because you've stopped checking manually by then. The whole point was not 
 
 ## Preferred alternative
 
-Daily HA automation nudging you to click the bookmarklet, plus a webhook push when you do,
+Daily HA automation nudging you to open Chrome, plus a webhook push when you do,
 so HA holds the real due dates and reminds on those. No stored session, nothing to detect,
-nothing to rot silently. Keeps the one click that already happens.
+nothing to rot silently. No moving parts to rot.
 
 ## Middle option
 

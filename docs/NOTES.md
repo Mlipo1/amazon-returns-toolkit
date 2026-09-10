@@ -1,7 +1,7 @@
 # Implementation notes
 
-Non-obvious behaviour behind both tools. Most of these cost real time to discover, and
-several are the kind of thing that fails *silently* — which is why they're written down.
+Non-obvious behaviour worth keeping. Most of it cost real time to discover, and several
+items are the kind of thing that fails *silently* — which is why they're written down.
 
 ---
 
@@ -96,12 +96,4 @@ stale index deletes the wrong person.
 
 ---
 
-## Bookmarklet specifics
-
-**It only runs on `amazon.com`.** Everything depends on same-origin `fetch` carrying the
-session cookie. Clicked from any other origin — including `install.html` itself on `file://`
-— every fetch dies with `Failed to fetch`. It guards on `location.hostname` and offers to
-open the returns page; `install.html` intercepts clicks on the button so it can only be
-dragged.
-
-Verified working against a live account: 7 returns, 6 active, all QR codes resolved.
+Verified against a live account: 7 returns, 6 active, every QR code resolved.
