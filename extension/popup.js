@@ -21,10 +21,26 @@ function label(d) {
 
 async function render() {
   const s = await chrome.storage.local.get(
-    Object.assign({ lastRunAt: null, lastOk: null, lastReason: "", lastRows: [] }, DEFAULTS));
+    Object.assign({
+      lastRunAt: null, lastOk: null, lastReason: "", lastRows: [],
+      haLastOk: null, haLastError: "", haLastAt: null
+    }, DEFAULTS));
 
   $("meta").textContent = "Checked " + ago(s.lastRunAt) +
     (s.lastOk === false ? " · check failed" : "");
+
+  // Home Assistant status is shown up front. A webhook that has never worked
+  // should not be indistinguishable from one that is fine.
+  const ha = $("ha");
+  if (!s.haWebhook) {
+    ha.hidden = true;
+  } else {
+    ha.hidden = false;
+    ha.className = "ha " + (s.haLastOk ? "good" : "bad");
+    ha.textContent = s.haLastOk
+      ? "Home Assistant: sent " + ago(s.haLastAt)
+      : "Home Assistant: " + (s.haLastError || "not sent yet");
+  }
 
   const fail = $("fail");
   if (s.lastOk === false) {
@@ -73,6 +89,33 @@ $("check").onclick = async () => {
   await render();
   $("check").textContent = "Check now";
   $("check").disabled = false;
+};
+
+$("test").onclick = async () => {
+  const btn = $("test"), out = $("haResult");
+  btn.disabled = true;
+  btn.textContent = "Testing…";
+  out.hidden = false;
+  out.className = "res";
+  out.textContent = "Posting to your webhook…";
+
+  let r;
+  try {
+    r = await chrome.runtime.sendMessage({ type: "testHA" });
+  } catch (e) {
+    r = { ok: false, error: String((e && e.message) || e) };
+  }
+
+  out.className = "res " + (r && r.ok ? "good" : "bad");
+  out.textContent = r && r.ok
+    ? "Connected. Home Assistant accepted the post (HTTP " + r.status + ") with " +
+      (r.sent || 0) + " return" + (r.sent === 1 ? "" : "s") + "."
+    : "Failed — " + ((r && r.error) || "unknown error") +
+      "\nIf Home Assistant is on another network, a local-only webhook will refuse it.";
+
+  btn.disabled = false;
+  btn.textContent = "Test connection";
+  await render();
 };
 
 $("open").onclick = () => chrome.tabs.create({ url: "https://www.amazon.com/your-returns" });

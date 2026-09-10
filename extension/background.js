@@ -128,7 +128,7 @@ async function runCheck(force) {
   const soon = active.filter((r) => r.days !== null && r.days >= 0 && r.days <= cfg.warnDays);
   setBadge(overdue.length + soon.length, overdue.length > 0);
 
-  if (cfg.haWebhook) postToHA(cfg.haWebhook, active, overdue, soon).catch(() => {});
+  if (cfg.haWebhook) await recordHA(await postJSON(cfg.haWebhook, haPayload(active, overdue, soon)));
 
   if (!overdue.length && !soon.length) return res;
   if (!force && store.lastNotifyDay === today) return res;
@@ -155,7 +155,7 @@ async function runCheck(force) {
 }
 
 // ---------- optional Home Assistant push ----------
-async function postToHA(url, active, overdue, soon) {
+function haPayload(active, overdue, soon, extra) {
   const now = new Date();
   const iso = (by) => {
     const d = dueDate(by, now);
@@ -167,25 +167,74 @@ async function postToHA(url, active, overdue, soon) {
   };
   const soonest = active.filter((r) => r.days !== null)[0] || active[0] || null;
 
-  await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      source: "amazon-return-reminder",
-      checked_at: now.toISOString(),
-      total_active: active.length,
-      overdue: overdue.length,
-      due_soon: soon.length,
-      // Pre-flattened so Home Assistant doesn't have to template it out.
-      next_item: soonest ? soonest.item.slice(0, 120) : "",
-      next_due: soonest ? iso(soonest.by) : null,
-      next_days_left: soonest && soonest.days !== null ? soonest.days : null,
-      returns: active.map((r) => ({
-        item: r.item, rma: r.rma, return_by: r.by, due_date: iso(r.by),
-        days_left: r.days, status: r.status, link: r.link
-      }))
-    })
+  return Object.assign({
+    source: "amazon-return-reminder",
+    checked_at: now.toISOString(),
+    total_active: active.length,
+    overdue: overdue.length,
+    due_soon: soon.length,
+    // Pre-flattened so Home Assistant doesn't have to template it out.
+    next_item: soonest ? soonest.item.slice(0, 120) : "",
+    next_due: soonest ? iso(soonest.by) : null,
+    next_days_left: soonest && soonest.days !== null ? soonest.days : null,
+    returns: active.map((r) => ({
+      item: r.item, rma: r.rma, return_by: r.by, due_date: iso(r.by),
+      days_left: r.days, status: r.status, link: r.link
+    }))
+  }, extra || {});
+}
+
+// Always resolves. A thrown fetch here used to vanish into a .catch(() => {}),
+// which meant a webhook that had never once worked looked identical to one that
+// was working fine.
+async function postJSON(url, payload) {
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return { ok: r.ok, status: r.status, error: r.ok ? "" : "Server replied HTTP " + r.status };
+  } catch (e) {
+    return { ok: false, status: 0, error: String((e && e.message) || e) };
+  }
+}
+
+async function recordHA(res) {
+  await chrome.storage.local.set({
+    haLastOk: res.ok, haLastError: res.error, haLastAt: new Date().toISOString()
   });
+  return res;
+}
+
+// Checks the whole path -- URL valid, Chrome permission granted, host reachable,
+// server accepted it -- and reports which step failed.
+async function testHA() {
+  const cfg = await settings();
+  if (!cfg.haWebhook) {
+    return { ok: false, error: "No webhook URL saved yet. Paste one and press Save first." };
+  }
+  let origin;
+  try {
+    origin = new URL(cfg.haWebhook).origin + "/*";
+  } catch (e) {
+    return { ok: false, error: "That doesn't parse as a URL." };
+  }
+  const has = await chrome.permissions.contains({ origins: [origin] });
+  if (!has) {
+    return { ok: false, error: "Chrome hasn't granted access to " + origin + ". Press Save to grant it." };
+  }
+
+  // Re-send the last real snapshot rather than dummy values, so a test can't
+  // overwrite Home Assistant with fake counts.
+  const s = await chrome.storage.local.get({ lastRows: [] });
+  const rows = s.lastRows || [];
+  const overdue = rows.filter((r) => r.days !== null && r.days < 0);
+  const soon = rows.filter((r) => r.days !== null && r.days >= 0 && r.days <= cfg.warnDays);
+
+  const res = await postJSON(cfg.haWebhook, haPayload(rows, overdue, soon, { test: true }));
+  await recordHA(res);
+  return Object.assign({ sent: rows.length }, res);
 }
 
 // ---------- wiring ----------
@@ -201,6 +250,10 @@ chrome.alarms.onAlarm.addListener((a) => { if (a.name === ALARM) runCheck(false)
 chrome.runtime.onMessage.addListener((msg, sender, respond) => {
   if (msg && msg.type === "checkNow") {
     runCheck(true).then((r) => respond(r || { ok: false }));
+    return true;
+  }
+  if (msg && msg.type === "testHA") {
+    testHA().then(respond).catch((e) => respond({ ok: false, error: String((e && e.message) || e) }));
     return true;
   }
 });

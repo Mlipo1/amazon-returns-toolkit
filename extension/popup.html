@@ -22,10 +22,17 @@
   input{font:12px system-ui;padding:5px 7px;border:1px solid #ccc;border-radius:5px}
   input[type=number]{width:52px}input[type=url]{width:100%;box-sizing:border-box}
   .hint{color:#999;font-size:10px;margin-top:3px}
+  .btns{display:flex;gap:7px;margin-top:9px}
+  .res{margin-top:9px;padding:8px 10px;border-radius:6px;font-size:12px;line-height:1.4;white-space:pre-line}
+  .res.good{background:#e7f5ea;border:1px solid #a8d5b5;color:#1c5c30}
+  .res.bad{background:#fdecea;border:1px solid #f5c2bd;color:#8a1c10}
+  .ha{font-size:11px;margin:-8px 0 12px}
+  .ha.good{color:#1c5c30}.ha.bad{color:#b12704}
 </style>
 
 <h1>Amazon returns</h1>
 <p class="meta" id="meta">Loading…</p>
+<div id="ha" class="ha" hidden></div>
 <div id="fail" class="fail" hidden></div>
 <div id="list"></div>
 
@@ -44,7 +51,11 @@
     <input type="url" id="haWebhook" placeholder="http://homeassistant.local:8123/api/webhook/…">
     <span class="hint">Every check POSTs the full list here. Leave blank to skip.</span>
   </label>
-  <button id="save" class="s">Save</button>
+  <div class="btns">
+    <button id="save" class="s">Save</button>
+    <button id="test" class="s">Test connection</button>
+  </div>
+  <div id="haResult" class="res" hidden></div>
 </fieldset>
 
 <script src="popup.js"></script>

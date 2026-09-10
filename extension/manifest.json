@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Amazon Return Reminder",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Checks your Amazon returns in the background and warns you before a drop-off deadline passes.",
   "permissions": ["alarms", "notifications", "storage", "offscreen"],
   "host_permissions": ["*://*.amazon.com/*"],
