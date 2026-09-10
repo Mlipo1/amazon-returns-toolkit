@@ -92,6 +92,16 @@ returns page in the background.
 | `offscreen` | MV3 service workers have no DOMParser. An offscreen document parses the returns page HTML. Nothing is rendered or shown to the user. |
 | `host_permissions: *://*.amazon.com/*` | Reads `amazon.com/your-returns` to find active returns and their deadlines. This is the data the extension exists to report on. |
 | `optional_host_permissions: *://*/*` | Only requested if the user enters a Home Assistant webhook URL, and only for that origin. Self-hosted HA has no fixed hostname, so the origin can't be declared in advance. Not requested otherwise. |
+| Remote code | Answer **"No, I am not using remote code."** All JavaScript ships in the package. The extension fetches HTML and parses it as data; nothing fetched is executed. |
+
+Every one of these is required before the Publish button unlocks — the dashboard blocks
+submission until each has text, plus the single purpose and the data-usage certification.
+
+## Contact email — read before entering one
+
+A verified publisher contact email is mandatory, and Google surfaces it on the public
+listing. Use a dedicated or alias address rather than a primary personal one; point the
+support URL at the repo's issues page.
 
 **Data usage** — tick these and nothing else:
 
