@@ -82,6 +82,11 @@ Escalating *overdue* as well as *due tomorrow* is deliberate: something already 
 window is more urgent than something with a day left, so it would be strange for it to
 arrive quieter.
 
+Both notifications go to `notify.mobile_app_<your_phone>` — confirmed as the iPhone 16 via
+`device_tracker.<your_phone>`, whose friendly name is "Lipo". Worth verifying on any install:
+a household with several phones will have several `mobile_app_*` targets, and picking the
+wrong one quietly sends your reminders to somebody else.
+
 **Data went stale** — 11:00, deliberately an hour after the reminder so the two can never
 arrive together. Notifies if `last_check` is more than 48h old. This one matters most:
 without it, an extension that has silently stopped reporting looks exactly like "no returns
@@ -99,13 +104,30 @@ Four independent guards:
 4. Silent when never configured. The first version fired whenever the timestamp was 0,
    which would have nagged daily forever anyone who never connected Home Assistant.
 
-## Android and Do Not Disturb
+## Critical notifications are platform-specific
 
-The critical tier sets `priority: high`, `ttl: 0` and its own channel (`Amazon Returns
-Urgent`), which gets it past Doze and keeps it on screen until dismissed. It does **not**
-bypass Do Not Disturb on its own — Android only allows that if you mark the channel as an
-override in system settings, and no payload can grant itself that. The channel appears in
-Android's notification settings after the first critical notification arrives.
+The two mobile platforms share nothing here, and sending the wrong keys fails silently —
+the notification still arrives, just without the urgency you asked for.
+
+**iOS** (what this setup uses):
+
+```yaml
+data:
+  push:
+    interruption-level: critical   # or time-sensitive
+    thread-id: amazon-returns      # collapses into one thread
+    sound: { name: default, critical: 1, volume: 1 }
+```
+
+`interruption-level: critical` breaks through silent mode and Focus, but **only after you
+enable Critical Alerts** in the companion app (app settings → Notifications → Critical
+Alerts). Without that permission it degrades to a normal notification rather than failing.
+`time-sensitive` breaks through Focus without any special permission and is the softer
+option.
+
+**Android** would instead want `ttl: 0`, `priority: high`, `channel:` and `sticky:`. None of
+those do anything on iOS. On Android, Do Not Disturb bypass is a per-channel setting the
+user enables in system settings — no payload can grant it to itself.
 
 ### 3. Point the extension at it
 
