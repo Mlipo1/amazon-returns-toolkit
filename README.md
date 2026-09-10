@@ -9,10 +9,12 @@ you already have. No account, no server, no API key, no password stored anywhere
 
 | | What it does |
 |---|---|
-| **Extension** | Checks your returns in the background and desktop-notifies you before a drop-off deadline passes. Install once, then nothing. |
-| **Bookmarklet** | One click builds a page with every active return — product photo, scannable QR, deadline — and drops it into a Gmail draft. |
+| **Extension** | Checks your returns in the background and warns you before a drop-off deadline passes — *and* collects every return's QR code onto one page in a single click. Install once, then nothing. |
+| **Bookmarklet** | The same QR sheet, with nothing installed. A bookmark you drag to the bar. Useful if you don't want an extension at all. |
 
-Use either on its own. They share no state.
+**The extension now does everything the bookmarklet does.** The bookmarklet remains for
+people who'd rather not install anything — it needs no permissions and no install, but only
+works while you're on an `amazon.com` tab.
 
 ---
 
@@ -34,6 +36,8 @@ That's the whole setup. Works in Chrome, Edge, Brave, and other Chromium browser
 Nothing to do — it runs on its own. Click the toolbar icon to see the current list, force a
 check, or change settings:
 
+- **📦 Get my QR codes** — opens a page with every active return: product photo, scannable
+  QR, Return ID, deadline. Email it, copy it, or print it.
 - **Warn me this many days ahead** — default 3.
 - **Home Assistant webhook** — optional. Every check POSTs the full list as JSON, so you can
   build your own automations on top. Leave blank to skip.

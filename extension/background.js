@@ -264,4 +264,32 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
     testHA().then(respond).catch((e) => respond({ ok: false, error: String((e && e.message) || e) }));
     return true;
   }
+
+  // The QR sheet. One request per return, so it runs only on demand -- never
+  // from the alarm.
+  if (msg && msg.type === "buildSheet") {
+    (async () => {
+      await ensureOffscreen();
+      return await chrome.runtime.sendMessage({ type: "scrapeSheet" });
+    })()
+      .then((r) => respond(r || { ok: false, reason: "no-response", rows: [] }))
+      .catch((e) => respond({ ok: false, reason: "fetch-failed", detail: String((e && e.message) || e), rows: [] }));
+    return true;
+  }
+
+  if (msg && msg.type === "accountEmail") {
+    (async () => {
+      await ensureOffscreen();
+      return await chrome.runtime.sendMessage({ type: "accountEmailFetch" });
+    })()
+      .then((r) => respond(r || { email: "" }))
+      .catch(() => respond({ email: "" }));
+    return true;
+  }
+
+  if (msg && msg.type === "openSheet") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
+    respond({ ok: true });
+    return true;
+  }
 });

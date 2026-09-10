@@ -118,6 +118,11 @@ $("test").onclick = async () => {
   await render();
 };
 
+$("sheet").onclick = () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
+  window.close();
+};
+
 $("open").onclick = () => chrome.tabs.create({ url: "https://www.amazon.com/your-returns" });
 $("cfg").onclick = () => { $("settings").hidden = !$("settings").hidden; };
 

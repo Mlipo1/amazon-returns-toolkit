@@ -13,6 +13,10 @@
   .it{flex:1;overflow-wrap:anywhere}
   .rma{color:#999;font-size:11px;font-family:Consolas,monospace}
   .empty{color:#666;padding:10px 0}
+  .hero{display:block;width:100%;margin-top:14px;font:700 15px system-ui;padding:13px 16px;
+        background:#ffd814;border:1px solid #fcd200;border-radius:9px;cursor:pointer}
+  .hero:hover{background:#f7ca00}
+  .heroHint{color:#767676;font-size:11px;margin:6px 0 0;text-align:center}
   .bar{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #eee}
   button{font:600 12px system-ui;padding:7px 12px;border:1px solid #d5d9d9;border-radius:7px;background:#ffd814;cursor:pointer}
   button.s{background:#fff}
@@ -35,6 +39,9 @@
 <div id="ha" class="ha" hidden></div>
 <div id="fail" class="fail" hidden></div>
 <div id="list"></div>
+
+<button id="sheet" class="hero">📦 Get my QR codes</button>
+<p class="heroHint">Every return on one page — photo, scannable QR, deadline — ready to email.</p>
 
 <div class="bar">
   <button id="check">Check now</button>

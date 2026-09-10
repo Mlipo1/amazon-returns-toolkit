@@ -16,6 +16,8 @@ INCLUDE = [
     "offscreen.js",
     "popup.html",
     "popup.js",
+    "report.html",
+    "report.js",
     "icon128.png",
 ]
 

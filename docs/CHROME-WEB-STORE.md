@@ -12,7 +12,7 @@ not per extension, not annual. There is no other cost.
 
 1. Go to the [Developer Dashboard](https://chrome.google.com/webstore/devconsole) and sign in.
 2. Pay the $5 registration fee.
-3. **Add new item** → upload `dist/amazon-return-reminder-v1.3.0.zip`.
+3. **Add new item** → upload `dist/amazon-return-reminder-v1.4.0.zip`.
 4. Fill the listing from the copy below.
 5. Add at least one screenshot (1280×800 or 640×400) — `dist/screenshot-popup.png`.
 6. Set the privacy fields (below), then **Submit for review**.
@@ -51,6 +51,7 @@ WHAT IT DOES
 - Desktop notification when a return is overdue or its deadline is close
 - Badge on the toolbar icon showing how many need attention
 - A popup listing every active return, its deadline, and its Return ID
+- One click collects every return's QR code onto a single page, ready to print or email
 - Adjustable warning window (default: 3 days)
 - Optional: POST each check to a Home Assistant webhook for your own automations
 
@@ -78,8 +79,9 @@ Not affiliated with or endorsed by Amazon.
 **Single purpose**
 
 ```
-Notifies the user before an Amazon return drop-off deadline passes by reading their Amazon
-returns page in the background.
+Helps the user complete their Amazon returns before the deadline expires: it reads their
+Amazon returns page, warns them before a drop-off deadline passes, and shows the QR codes
+needed to complete those returns.
 ```
 
 **Permission justifications**
@@ -136,3 +138,11 @@ on the account. Say exactly that if asked.
 ```bash
 python package.py
 ```
+
+## If you change the extension's scope
+
+Chrome's single-purpose policy is a common rejection reason. Adding the QR sheet broadened
+this beyond "notify me", so the single purpose above was rewritten to cover both halves under
+one goal — completing returns before the deadline. Two features serving one stated goal is
+fine; two unrelated goals is not. Update the listing before uploading a build that widens
+scope, not after a rejection.

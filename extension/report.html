@@ -1,0 +1,66 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>My Amazon return codes</title>
+<style>
+  body{font:15px/1.5 system-ui,Segoe UI,sans-serif;margin:0;padding:32px;background:#f6f6f6;color:#111}
+  .w{max-width:940px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:#666;margin:0 0 18px}
+  .bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  button{font:600 14px system-ui;padding:10px 18px;border:1px solid #d5d9d9;border-radius:8px;cursor:pointer;background:#ffd814}
+  button.g{background:#111;color:#fff;border-color:#111}
+  button:disabled{opacity:.5;cursor:default}
+  button.sm{font:600 12px system-ui;padding:6px 11px;border-radius:6px;background:#fff}
+  .rec{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px;font-size:13px}
+  .rl{color:#666}.none{color:#b12704;font-weight:600}
+  .chip{background:#eef3f8;border:1px solid #cfdbe6;border-radius:14px;padding:4px 6px 4px 11px;display:inline-flex;gap:7px;align-items:center}
+  .chip i{font-style:normal;color:#8a9bab;font-size:11px}
+  .chip b{cursor:pointer;color:#94a3b0;font-weight:700;padding:0 3px}
+  .chip b:hover{color:#b12704}
+  #addr{font:13px system-ui;padding:6px 9px;border:1px solid #ccc;border-radius:6px}
+  .tip{display:none;background:#e7f5ea;border:1px solid #a8d5b5;border-radius:8px;padding:12px 16px;font-size:14px;color:#1c5c30;margin-bottom:14px}
+  .warn{background:#fff4e5;border:1px solid #ffd8a8;border-radius:8px;padding:10px 14px;font-size:13px;color:#7a4b00;margin-bottom:22px}
+  .c{background:#fff;border:1px solid #ddd;border-radius:10px;padding:18px;margin-bottom:14px;display:flex;gap:18px;align-items:flex-start}
+  .pi{width:80px;flex:0 0 80px}
+  .qr{width:140px;height:140px;flex:0 0 140px;border:1px solid #eee;background:#fff}
+  .t{font-weight:600;margin-bottom:8px}
+  .id{font:700 17px ui-monospace,Consolas,monospace;margin:4px 0}
+  .m{color:#555;font-size:13px}
+  .od{color:#b12704;font-weight:700}
+  .dn{opacity:.55}
+  a{color:#007185}
+  #stage{position:absolute;left:-9999px;top:0}
+  .load{padding:60px 0;text-align:center;color:#555}
+  .spin{width:26px;height:26px;border:3px solid #ddd;border-top-color:#e77600;border-radius:50%;margin:0 auto 14px;animation:s .8s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  @media print{body{background:#fff;padding:0}.bar,.warn,.tip,.rec{display:none}.c{break-inside:avoid}}
+</style>
+
+<div class="w">
+  <h1>My Amazon return codes</h1>
+  <p class="sub" id="sub">Reading your returns…</p>
+
+  <div id="loading" class="load"><div class="spin"></div><div id="prog">Starting…</div></div>
+
+  <div id="main" hidden>
+    <div class="bar">
+      <button class="g" id="mail">Email</button>
+      <button id="copy">Copy as text</button>
+      <button id="prt">Print</button>
+      <button id="refresh">Refresh</button>
+    </div>
+    <div class="rec" id="rec"></div>
+    <div class="tip" id="tip"></div>
+    <div class="warn">
+      <b>Scan the QR, not the ID.</b> Amazon never shows a typeable return code — the QR image
+      is what a store associate scans. These QR links expire 7 days from today; after that,
+      use the <i>On Amazon</i> link to load a fresh one.
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <div id="err" hidden class="warn"></div>
+</div>
+<div id="stage"></div>
+
+<script src="report.js"></script>
