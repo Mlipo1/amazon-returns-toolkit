@@ -156,17 +156,32 @@ async function runCheck(force) {
 
 // ---------- optional Home Assistant push ----------
 async function postToHA(url, active, overdue, soon) {
+  const now = new Date();
+  const iso = (by) => {
+    const d = dueDate(by, now);
+    if (!d) return null;
+    // Local calendar date, not toISOString() -- that shifts across UTC.
+    return d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+  };
+  const soonest = active.filter((r) => r.days !== null)[0] || active[0] || null;
+
   await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       source: "amazon-return-reminder",
-      checked_at: new Date().toISOString(),
+      checked_at: now.toISOString(),
       total_active: active.length,
       overdue: overdue.length,
       due_soon: soon.length,
+      // Pre-flattened so Home Assistant doesn't have to template it out.
+      next_item: soonest ? soonest.item.slice(0, 120) : "",
+      next_due: soonest ? iso(soonest.by) : null,
+      next_days_left: soonest && soonest.days !== null ? soonest.days : null,
       returns: active.map((r) => ({
-        item: r.item, rma: r.rma, return_by: r.by,
+        item: r.item, rma: r.rma, return_by: r.by, due_date: iso(r.by),
         days_left: r.days, status: r.status, link: r.link
       }))
     })

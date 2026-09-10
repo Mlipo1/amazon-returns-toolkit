@@ -79,9 +79,32 @@ $("open").onclick = () => chrome.tabs.create({ url: "https://www.amazon.com/your
 $("cfg").onclick = () => { $("settings").hidden = !$("settings").hidden; };
 
 $("save").onclick = async () => {
+  const hook = $("haWebhook").value.trim();
+
+  // The extension only holds amazon.com by default. Posting anywhere else needs
+  // permission for that origin, asked for here rather than up front.
+  if (hook) {
+    let origin;
+    try { origin = new URL(hook).origin + "/*"; }
+    catch (e) {
+      $("save").textContent = "Bad URL";
+      setTimeout(() => ($("save").textContent = "Save"), 2000);
+      return;
+    }
+    const has = await chrome.permissions.contains({ origins: [origin] });
+    if (!has) {
+      const granted = await chrome.permissions.request({ origins: [origin] });
+      if (!granted) {
+        $("save").textContent = "Permission denied";
+        setTimeout(() => ($("save").textContent = "Save"), 2500);
+        return;
+      }
+    }
+  }
+
   await chrome.storage.local.set({
     warnDays: Math.max(0, Math.min(30, parseInt($("warnDays").value, 10) || 0)),
-    haWebhook: $("haWebhook").value.trim()
+    haWebhook: hook
   });
   $("save").textContent = "Saved";
   setTimeout(() => ($("save").textContent = "Save"), 1500);

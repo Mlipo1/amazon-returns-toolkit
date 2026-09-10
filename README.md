@@ -40,6 +40,17 @@ check, or change settings:
 
 The badge shows how many returns are due soon or overdue, red if anything is overdue.
 
+### Home Assistant
+
+Optional. Put a webhook URL in the extension's settings and every check POSTs the full list
+as JSON — counts, per-return deadlines as real ISO dates, RMA, and link. HA can then hold
+your deadlines, remind you on its own schedule, and — importantly — warn you when the
+extension has *stopped* reporting.
+
+[docs/HOME-ASSISTANT.md](docs/HOME-ASSISTANT.md) has the payload shape, the helpers, and the
+three automations, including why the staleness watchdog matters more than the reminder
+itself.
+
 ### Why it's built this way
 
 The obvious design — a server or cron job that logs into Amazon on a schedule — fails badly.
@@ -108,9 +119,13 @@ must be synchronous, and other things that cost real time to discover.
 ## Repo layout
 
 ```
-extension/     Chrome extension (MV3)
-bookmarklet/   source.js -> build.py -> install.html
-docs/          NOTES.md, AUTOMATION.md, SHARING.md
+extension/           Chrome extension (MV3)
+bookmarklet/         source.js -> build.py -> install.html
+dist/                packaged .zip + store screenshot
+docs/                NOTES.md, HOME-ASSISTANT.md, CHROME-WEB-STORE.md,
+                     PRIVACY.md, AUTOMATION.md, SHARING.md
+package.py           builds the Chrome Web Store zip
+make_screenshot.py   renders the 1280x800 store screenshot
 ```
 
 Editing the bookmarklet means editing `bookmarklet/source.js`, then:
