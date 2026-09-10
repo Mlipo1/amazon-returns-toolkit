@@ -1,0 +1,50 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Amazon returns</title>
+<style>
+  body{font:13px/1.45 system-ui,Segoe UI,sans-serif;margin:0;padding:14px;width:360px;color:#111;background:#fff}
+  h1{font-size:14px;margin:0 0 2px}
+  .meta{color:#666;font-size:11px;margin:0 0 12px}
+  .fail{background:#fdecea;border:1px solid #f5c2bd;color:#8a1c10;border-radius:7px;padding:9px 11px;margin-bottom:12px}
+  .row{display:flex;gap:10px;padding:8px 0;border-top:1px solid #eee;align-items:baseline}
+  .row:first-of-type{border-top:0}
+  .d{flex:0 0 66px;font-weight:700;font-size:12px}
+  .od{color:#b12704}.soon{color:#c45500}.ok{color:#767676}
+  .it{flex:1;overflow-wrap:anywhere}
+  .rma{color:#999;font-size:11px;font-family:Consolas,monospace}
+  .empty{color:#666;padding:10px 0}
+  .bar{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #eee}
+  button{font:600 12px system-ui;padding:7px 12px;border:1px solid #d5d9d9;border-radius:7px;background:#ffd814;cursor:pointer}
+  button.s{background:#fff}
+  fieldset{border:1px solid #eee;border-radius:7px;margin:12px 0 0;padding:9px 11px}
+  legend{color:#888;font-size:11px;padding:0 4px}
+  label{display:block;margin:6px 0;color:#555}
+  input{font:12px system-ui;padding:5px 7px;border:1px solid #ccc;border-radius:5px}
+  input[type=number]{width:52px}input[type=url]{width:100%;box-sizing:border-box}
+  .hint{color:#999;font-size:10px;margin-top:3px}
+</style>
+
+<h1>Amazon returns</h1>
+<p class="meta" id="meta">Loading…</p>
+<div id="fail" class="fail" hidden></div>
+<div id="list"></div>
+
+<div class="bar">
+  <button id="check">Check now</button>
+  <button id="open" class="s">Open on Amazon</button>
+  <button id="cfg" class="s">Settings</button>
+</div>
+
+<fieldset id="settings" hidden>
+  <legend>Settings</legend>
+  <label>Warn me this many days ahead:
+    <input type="number" id="warnDays" min="0" max="30">
+  </label>
+  <label>Home Assistant webhook (optional):
+    <input type="url" id="haWebhook" placeholder="http://homeassistant.local:8123/api/webhook/…">
+    <span class="hint">Every check POSTs the full list here. Leave blank to skip.</span>
+  </label>
+  <button id="save" class="s">Save</button>
+</fieldset>
+
+<script src="popup.js"></script>

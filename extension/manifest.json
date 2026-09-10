@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Amazon Return Reminder",
+  "version": "1.0.0",
+  "description": "Checks your Amazon returns in the background and warns you before a drop-off deadline passes.",
+  "permissions": ["alarms", "notifications", "storage", "offscreen"],
+  "host_permissions": ["*://*.amazon.com/*"],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Amazon returns",
+    "default_icon": { "128": "icon128.png" }
+  },
+  "icons": { "128": "icon128.png" }
+}
