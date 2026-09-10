@@ -83,7 +83,7 @@ window is more urgent than something with a day left, so it would be strange for
 arrive quieter.
 
 Both notifications go to `notify.mobile_app_<your_phone>` — confirmed as the iPhone 16 via
-`device_tracker.<your_phone>`, whose friendly name is "Lipo". Worth verifying on any install:
+`device_tracker.<your_phone>`, whose friendly name matches your phone. Worth verifying on any install:
 a household with several phones will have several `mobile_app_*` targets, and picking the
 wrong one quietly sends your reminders to somebody else.
 
