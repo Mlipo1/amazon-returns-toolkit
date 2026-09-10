@@ -165,7 +165,12 @@ function haPayload(active, overdue, soon, extra) {
       String(d.getMonth() + 1).padStart(2, "0") + "-" +
       String(d.getDate()).padStart(2, "0");
   };
-  const soonest = active.filter((r) => r.days !== null)[0] || active[0] || null;
+  // `active` is sorted ascending by days, so the most overdue return sorts FIRST.
+  // Reporting a single "soonest" therefore pinned it to the most overdue item and
+  // masked every real upcoming deadline behind it. Overdue and upcoming are two
+  // separate questions, so they are reported as two separate tracks.
+  const upcoming = active.filter((r) => r.days !== null && r.days >= 0)[0] || null;
+  const worst = active.filter((r) => r.days !== null && r.days < 0)[0] || null;
 
   return Object.assign({
     source: "amazon-return-reminder",
@@ -174,9 +179,12 @@ function haPayload(active, overdue, soon, extra) {
     overdue: overdue.length,
     due_soon: soon.length,
     // Pre-flattened so Home Assistant doesn't have to template it out.
-    next_item: soonest ? soonest.item.slice(0, 120) : "",
-    next_due: soonest ? iso(soonest.by) : null,
-    next_days_left: soonest && soonest.days !== null ? soonest.days : null,
+    next_item: upcoming ? upcoming.item.slice(0, 120) : "",
+    next_due: upcoming ? iso(upcoming.by) : null,
+    next_days_left: upcoming ? upcoming.days : null,
+    overdue_item: worst ? worst.item.slice(0, 120) : "",
+    overdue_due: worst ? iso(worst.by) : null,
+    overdue_days: worst ? worst.days : null,
     returns: active.map((r) => ({
       item: r.item, rma: r.rma, return_by: r.by, due_date: iso(r.by),
       days_left: r.days, status: r.status, link: r.link

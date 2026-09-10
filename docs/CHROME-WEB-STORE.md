@@ -12,7 +12,7 @@ not per extension, not annual. There is no other cost.
 
 1. Go to the [Developer Dashboard](https://chrome.google.com/webstore/devconsole) and sign in.
 2. Pay the $5 registration fee.
-3. **Add new item** → upload `dist/amazon-return-reminder-v1.2.0.zip`.
+3. **Add new item** → upload `dist/amazon-return-reminder-v1.3.0.zip`.
 4. Fill the listing from the copy below.
 5. Add at least one screenshot (1280×800 or 640×400) — `dist/screenshot-popup.png`.
 6. Set the privacy fields (below), then **Submit for review**.

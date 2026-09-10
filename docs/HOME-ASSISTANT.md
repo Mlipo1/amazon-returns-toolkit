@@ -15,9 +15,12 @@ Every check, as JSON:
   "total_active": 6,
   "overdue": 1,
   "due_soon": 0,
-  "next_item": "Inline Duct Fan, 6 Inch, with Variable Speed Controller",
-  "next_due": "2026-08-28",
-  "next_days_left": -12,
+  "next_item": "AC Manifold Gauge Set, 3-Way",
+  "next_due": "2026-09-11",
+  "next_days_left": 1,
+  "overdue_item": "Inline Duct Fan, 6 Inch, with Variable Speed Controller",
+  "overdue_due": "2026-08-28",
+  "overdue_days": -12,
   "returns": [
     {
       "item": "Inline Duct Fan, 6 Inch, with Variable Speed Controller",
@@ -31,6 +34,13 @@ Every check, as JSON:
   ]
 }
 ```
+
+**Overdue and upcoming are two separate tracks, and that matters.** The first version sent
+a single "soonest" return. Because the list sorts ascending by days-left, the most *overdue*
+item sorts first — so one long-expired return pinned the countdown to itself forever and hid
+every genuine upcoming deadline behind it. With a 50-day-overdue item in the list, a return
+actually due tomorrow was never mentioned. They are now reported independently, and the
+notification names both.
 
 Counts arrive pre-computed and `due_date` is a real ISO date, so HA never has to parse
 `"Sep 28"` or guess a year. That guessing is genuinely awkward — Amazon omits the year, so a
@@ -48,8 +58,10 @@ Six, all fed by the webhook:
 | `input_number.amazon_returns_active` | count of active returns |
 | `input_number.amazon_returns_overdue` | count past the drop-off window |
 | `input_number.amazon_returns_due_soon` | count inside the warning window |
-| `input_text.amazon_returns_next_item` | name of the most urgent one |
+| `input_text.amazon_returns_next_item` | soonest **upcoming** return |
 | `input_datetime.amazon_returns_next_due` | its deadline |
+| `input_text.amazon_returns_overdue_item` | most **overdue** return |
+| `input_datetime.amazon_returns_overdue_due` | its expired deadline |
 | `input_datetime.amazon_returns_last_check` | when the extension last reported |
 | `input_boolean.amazon_returns_stale_alerted` | latch, so an outage warns once not daily |
 
