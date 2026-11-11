@@ -38,7 +38,12 @@ Return ID, deadline. From there:
   press `Ctrl+V`, Send. The paste is required — Gmail's compose link can't carry images.
 - **Send to:** — manage recipients. Your Amazon account address is detected and added on
   first run; remove it or add others, and it's remembered.
-- **Copy as text** / **Print**
+- **🖨 Print 4×6 labels** — one label per return sized for a 4×6 thermal printer: deadline,
+  drop-off method, a 2.5in QR, item name and Return ID.
+- **Copy as text** / **Print this page**
+
+Completed and refunded returns are dropped entirely — the sheet only ever shows what you
+still have to act on.
 
 ### Settings
 

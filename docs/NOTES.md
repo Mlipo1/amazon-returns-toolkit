@@ -79,6 +79,23 @@ different ID and therefore empty storage. Removing an extension also wipes
 
 ---
 
+## Printing
+
+**Never scale a QR code.** The 4×6 label page sets `@page { size: 4in 6in; margin: 0 }` and
+the printer must be set to 100% / Actual size with margins None. "Fit to page" resamples the
+code and is the usual reason a printed QR won't scan.
+
+**A carrier shipping label must not be re-rendered.** For mail-back returns Amazon issues a
+real postage label whose barcode is only valid at its exact scale, so the label page shows a
+pointer to Amazon's own printable label instead of a home-made copy. Dropping a scanned
+shipping barcode into a hand-built layout is how you get a parcel that can't be routed.
+
+**Expired QR images would print as blank boxes.** The presigned links die after 7 days, and a
+broken `<img>` prints as nothing at all — so the label view swaps in a visible "QR expired"
+panel on image error rather than emitting a silent blank.
+
+---
+
 ## Email
 
 **Gmail's compose URL carries plain text only.** `?body=` cannot hold HTML or attachments, so

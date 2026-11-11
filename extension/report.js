@@ -81,9 +81,7 @@ function renderRec() {
 function render() {
   const now = new Date();
   const stamp = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  const rows = ROWS.map((r) => Object.assign({}, r, { days: daysLeft(r.by, now) }));
-  const active = rows.filter((r) => !r.done);
-  const doneN = rows.length - active.length;
+  const active = ROWS.map((r) => Object.assign({}, r, { days: daysLeft(r.by, now) }));
   const over = (r) => r.days !== null && r.days < 0;
 
   $("sub").textContent = active.length + " active return" + (active.length === 1 ? "" : "s") +
@@ -103,7 +101,6 @@ function render() {
     if (r.note) TEXT += "   Note:       " + r.note + "\n";
     TEXT += "\n";
   });
-  if (doneN) TEXT += doneN + " other return" + (doneN > 1 ? "s" : "") + " already refunded.\n";
 
   // on-screen cards
   let html = "";
@@ -121,10 +118,6 @@ function render() {
       "</div>" +
       (r.note ? '<div class="m od">' + esc(r.note) + "</div>" : "") +
       "</div></div>";
-  });
-  rows.filter((r) => r.done).forEach((r) => {
-    html += '<div class="c dn">' + (r.img ? '<img class="pi" src="' + esc(r.img) + '" alt="">' : "") +
-      '<div><div class="t">' + esc(r.item) + '</div><div class="m">' + esc(r.status) + "</div></div></div>";
   });
   $("list").innerHTML = html;
 
@@ -151,8 +144,6 @@ function render() {
       (r.note ? '<br><span style="color:#b12704;font-size:12px">' + esc(r.note) + "</span>" : "") +
       "</td></tr></table>";
   });
-  if (doneN) mail += '<p style="color:#888;font-size:12px">' + doneN +
-    " other return" + (doneN > 1 ? "s" : "") + " already refunded.</p>";
   mail += "</div>";
   $("stage").innerHTML = mail;
 
@@ -200,6 +191,10 @@ $("mail").onclick = () => {
   window.open(url, "_blank");
 };
 
+$("labels").onclick = () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("label.html") });
+};
+
 $("refresh").onclick = () => location.reload();
 
 chrome.runtime.onMessage.addListener((msg) => {
@@ -241,7 +236,16 @@ chrome.runtime.onMessage.addListener((msg) => {
     return;
   }
 
-  ROWS = res.rows || [];
+  ROWS = (res.rows || []).filter((r) => !r.done);
+  chrome.storage.local.set({ sheetRows: ROWS, sheetAt: Date.now() });
+
+  if (!ROWS.length) {
+    $("sub").textContent = "";
+    $("err").hidden = false;
+    $("err").textContent = "No active returns — everything has been refunded or completed.";
+    return;
+  }
+
   $("main").hidden = false;
   render();
   renderRec();

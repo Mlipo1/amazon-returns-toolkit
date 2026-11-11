@@ -40,7 +40,7 @@ function parseCard(c) {
     link: href,
     img: prodImg ? bigImg(prodImg.getAttribute("src")) : "",
     done: /refund (credited|issued)|refunded|completed|closed|cancell?ed/i.test(status),
-    qr: "", note: ""
+    qr: "", labelUrl: "", note: ""
   };
 }
 
@@ -73,6 +73,16 @@ async function scrapeSheet() {
         .filter((x) => /qrcode-images/i.test(x.getAttribute("src") || ""))[0];
       if (im) row.qr = im.getAttribute("src");
       else row.note = "No QR on this return — open it on Amazon for a mailing label.";
+
+      // Amazon's own printable label page. Free to capture here (we already have
+      // the status page); needed for mail-back returns, where a carrier shipping
+      // label must be printed from Amazon at its exact scale.
+      const lab = [].slice.call(d.querySelectorAll("a"))
+        .filter((x) => /\/spr\/returns\/label\//.test(x.getAttribute("href") || ""))[0];
+      if (lab) {
+        let h = lab.getAttribute("href");
+        row.labelUrl = h.indexOf("http") === 0 ? h : "https://www.amazon.com" + h;
+      }
     } catch (e) {
       row.note = "Could not read this return (" + e.message + ")";
     }

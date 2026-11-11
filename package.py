@@ -18,6 +18,8 @@ INCLUDE = [
     "popup.js",
     "report.html",
     "report.js",
+    "label.html",
+    "label.js",
     "icon128.png",
 ]
 

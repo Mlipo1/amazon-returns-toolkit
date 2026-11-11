@@ -1,0 +1,67 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Return labels — 4×6</title>
+<style>
+  /* 4x6 thermal. Exact page size, zero margin: the printer driver must not
+     scale anything, or the QR stops scanning reliably. */
+  @page { size: 4in 6in; margin: 0; }
+
+  body{margin:0;background:#525659;font:13px/1.4 system-ui,Segoe UI,sans-serif;color:#111}
+
+  .toolbar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #ccc;
+           padding:12px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .toolbar h1{font-size:15px;margin:0 12px 0 0}
+  .toolbar .hint{color:#666;font-size:12px;flex:1 1 100%;margin:2px 0 0}
+  button{font:600 13px system-ui;padding:9px 16px;border:1px solid #d5d9d9;border-radius:7px;
+         cursor:pointer;background:#ffd814}
+  button.s{background:#fff}
+
+  .sheet{display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 0}
+
+  .label{
+    width:4in; height:6in; background:#fff; box-sizing:border-box;
+    padding:0.22in 0.2in; display:flex; flex-direction:column; align-items:center;
+    text-align:center; overflow:hidden; page-break-after:always; break-after:page;
+  }
+  .label:last-child{page-break-after:auto;break-after:auto}
+
+  .hdr{font:700 13pt/1.1 system-ui;letter-spacing:.02em;margin:0}
+  .due{font:700 15pt/1.15 system-ui;margin:.04in 0 0}
+  .due.od{text-decoration:underline}
+  .meth{font:600 10pt/1.2 system-ui;margin:.05in 0 0}
+
+  .qrwrap{margin:.1in 0 .04in}
+  .qr{width:2.5in;height:2.5in;display:block;image-rendering:pixelated}
+  .noqr{width:2.5in;height:2.5in;display:flex;align-items:center;justify-content:center;
+        border:2px dashed #000;font:600 10pt/1.3 system-ui;padding:.15in;box-sizing:border-box}
+
+  .item{font:600 9.5pt/1.25 system-ui;margin:.04in 0 0;max-height:.62in;overflow:hidden}
+  .rma{font:700 12pt/1.1 ui-monospace,Consolas,monospace;letter-spacing:.04em;margin:.06in 0 0}
+  .rmaL{font:9pt/1 system-ui;color:#000;margin:.02in 0 0}
+  .foot{margin-top:auto;font:8.5pt/1.25 system-ui;border-top:1.5px solid #000;
+        padding-top:.06in;width:100%}
+
+  .empty{background:#fff;padding:40px;border-radius:10px;max-width:460px;text-align:center}
+
+  @media print{
+    body{background:#fff}
+    .toolbar{display:none}
+    .sheet{padding:0;gap:0}
+    .label{box-shadow:none}
+  }
+  @media screen{ .label{box-shadow:0 3px 14px rgba(0,0,0,.45)} }
+</style>
+
+<div class="toolbar">
+  <h1>Return labels — 4×6</h1>
+  <button id="print">Print</button>
+  <button class="s" id="back">Back to sheet</button>
+  <p class="hint">
+    Set the printer to <b>4in × 6in</b> with scaling <b>100% / Actual size</b> and margins
+    <b>None</b>. Scaling a QR code is what makes it fail to scan.
+  </p>
+</div>
+
+<div class="sheet" id="sheet"></div>
+
+<script src="label.js"></script>
